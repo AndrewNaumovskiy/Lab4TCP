@@ -17,6 +17,9 @@ namespace Lab4
     {
         public const string IP = "127.0.0.1";
         public const int port = 8888;
+        public const string LogFilePath = "log.txt";
+        public const string RandomFilePath = "random.txt";
+
 
         static void Main()
         {
@@ -31,7 +34,6 @@ namespace Lab4
                 Client.Init();
             }
 
-            Console.ReadLine();
             Console.ReadLine();
         }
     }
