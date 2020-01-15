@@ -21,7 +21,7 @@ namespace Lab4
         static void Main()
         {
             int cho = Convert.ToInt32(Console.ReadLine());
-
+            // ya lublu minecraft
             if (cho == 1)
             {
                 Server.Init();
