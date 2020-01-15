@@ -17,22 +17,26 @@ namespace Lab4
     {
         public const string IP = "127.0.0.1";
         public const int port = 8888;
-
+        public const string filePath = "log.txt";
         static void Main()
         {
-            int cho = Convert.ToInt32(Console.ReadLine());
-            // ya lublu minecraft
-            if (cho == 1)
-            {
-                Server.Init();
-            }
-            else
-            {
-                Client.Init();
-            }
 
-            Console.ReadLine();
-            Console.ReadLine();
+            int cho = Convert.ToInt32(Console.ReadLine());
+
+            Logger.Log(filePath,cho.ToString());
+
+
+            // ya lublu minecraft
+            //if (cho == 1)
+            //{
+            //    Server.Init();
+            //}
+            //else
+            //{
+            //    Client.Init();
+            //}
+
+            Console.ReadKey();
         }
     }
 }
