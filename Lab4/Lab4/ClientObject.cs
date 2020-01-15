@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 
@@ -9,9 +10,11 @@ namespace Lab4
     {
         protected internal string Id { get; private set; }
         protected internal NetworkStream Stream { get; private set; }
-        string userName;
-        TcpClient client;
-        ServerObject server; // объект сервера
+
+        readonly TcpClient client;
+        readonly ServerObject server; // объект сервера
+        public int ParentNumber = 0;
+        public List<int> ChildNumber;
 
         public ClientObject(TcpClient tcpClient, ServerObject serverObject)
         {
@@ -19,34 +22,36 @@ namespace Lab4
             client = tcpClient;
             server = serverObject;
             serverObject.AddConnection(this);
+
+            if (server.clients.Count > 1)
+            {
+                ParentNumber = FileHelper.GetNextRndNumber() % server.clients.Count;
+                server.clients[ParentNumber - 1]?.ChildNumber.Add(server.clients.FindIndex(x => x == this) + 1);
+            }
+            ChildNumber = new List<int>();
         }
 
         public void Process()
         {
             try
             {
+                server.SendToSpecificClient("NUMBER",server.clients.FindIndex(x => x == this) + 1);
                 Stream = client.GetStream();
-                // получаем имя пользователя
-                string message = GetMessage();
-                userName = message;
-
-                message = userName + " entered";
-                // посылаем сообщение о входе в чат всем подключенным пользователям
-                server.BroadcastMessage(message, this.Id);
-                Console.WriteLine(message);
+                
                 // в бесконечном цикле получаем сообщения от клиента
                 while (true)
                 {
                     try
                     {
-                        message = GetMessage();
-                        message = String.Format("{0}: {1}", userName, message);
+                        var message = GetMessage();
+                        server.Parse(message, this);
+                        message = String.Format($"{Id}: {message}");
                         Console.WriteLine(message);
                         server.BroadcastMessage(message, this.Id);
                     }
                     catch
                     {
-                        message = String.Format("{0}: left chat", userName);
+                        var message = String.Format($"{Id}: left chat");
                         Console.WriteLine(message);
                         server.BroadcastMessage(message, this.Id);
                         break;

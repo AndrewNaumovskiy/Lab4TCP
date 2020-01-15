@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Pipes;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -11,7 +13,7 @@ namespace Lab4
     public class ServerObject
     {
         static TcpListener tcpListener; // сервер для прослушивания
-        List<ClientObject> clients = new List<ClientObject>(); // все подключения
+        public List<ClientObject> clients = new List<ClientObject>(); // все подключения
 
         protected internal void AddConnection(ClientObject clientObject)
         {
@@ -62,6 +64,42 @@ namespace Lab4
                 }
             }
         }
+
+        bool beforeGenerate = true;
+        public void Parse(string command, ClientObject sender)
+        {
+
+            var parameters = command.Split(' ');
+            switch (parameters[0])
+            {
+                case "OUT":
+                    int number = Convert.ToInt32(parameters[1]);
+                    parameters[2].Replace("F", "");
+                    SendToSpecificClient($"GENERATE {parameters[2]}", number); 
+                    break;
+                case "GENERATE":
+                    beforeGenerate = false;
+                    string fibonacciGenerated = FibonachiGenerator.Generate(Convert.ToInt32(parameters[1])).ToString();
+                    SendToSpecificClient(fibonacciGenerated, clients.FindIndex(x => x == sender) + 1);
+                    break;
+                case "DISCONNECT":
+                    if (beforeGenerate)
+                    {
+                        var reconnectClient =  clients[Convert.ToInt32(parameters[1])];
+                        clients[Convert.ToInt32(parameters[1])].Close();
+                        AddConnection(reconnectClient);
+                    }
+                    break;
+                
+            }
+        }
+
+        public  void SendToSpecificClient(string message, int number)
+        {
+            byte[] data = Encoding.Unicode.GetBytes(message);
+            clients[number].Stream.Write(data,0,data.Length);
+        }
+
         // отключение всех клиентов
         protected internal void Disconnect()
         {

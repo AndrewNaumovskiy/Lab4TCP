@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,28 +10,21 @@ namespace Lab4
 {
     public static class Client
     {
-        public static string userName;
+        public static int Number;
         static TcpClient client;
         static NetworkStream stream;
 
         public static void Init()
         {
-            Console.Write("Enter name: ");
-            userName = Console.ReadLine();
             client = new TcpClient();
             try
             {
                 client.Connect(Program.IP, Program.port); //подключение клиента
                 stream = client.GetStream(); // получаем поток
 
-                string message = userName;
-                byte[] data = Encoding.Unicode.GetBytes(message);
-                stream.Write(data, 0, data.Length);
-
                 // запускаем новый поток для получения данных
                 Thread receiveThread = new Thread(new ThreadStart(ReceiveMessage));
                 receiveThread.Start(); //старт потока
-                Console.WriteLine("Welcome, {0}", userName);
                 SendMessage();
             }
             catch (Exception ex)
@@ -50,11 +44,17 @@ namespace Lab4
 
             while (true)
             {
-                string message = Console.ReadLine();
-                byte[] data = Encoding.Unicode.GetBytes(message);
+                var messageFromConsole = Console.ReadLine();
+                byte[] data = Encoding.Unicode.GetBytes(messageFromConsole);
                 stream.Write(data, 0, data.Length);
             }
         }
+
+        private static void ClientToServer(string message)
+        {
+            
+        }
+
         // получение сообщений
         static void ReceiveMessage()
         {
@@ -72,7 +72,8 @@ namespace Lab4
                     } while (stream.DataAvailable);
 
                     string message = builder.ToString();
-                    Console.WriteLine(message); //вывод сообщения
+
+                    Parse(message);
                 }
                 catch
                 {
@@ -81,6 +82,32 @@ namespace Lab4
                     Disconnect();
                 }
             }
+        }
+
+        public static void Parse(string command)
+        {
+            var parameters = command.Split(' ');
+            switch (parameters[0])
+            {
+                case "NUMBER":
+                    Number = Convert.ToInt32(parameters[1]);
+                    break;
+                case "PROTOCOL":
+                    string msg = "";
+                    for (int i = 1; i < parameters.Length; i++)
+                        msg += parameters[i];
+                    Protocol(msg);
+                    break;
+                case "GENERATE":
+                    string kek = FibonachiGenerator.Generate(Convert.ToInt32(parameters[1])).ToString();
+                    ClientToServer(kek);
+                    break;
+            }
+        }
+
+        public static void Protocol(string message)
+        {
+            FileHelper.Log(Program.LogFilePath,message);
         }
 
         static void Disconnect()
