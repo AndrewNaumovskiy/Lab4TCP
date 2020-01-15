@@ -38,7 +38,7 @@ namespace Lab4
             var mewo = kek.Split(' ');
             switch (mewo[0])
             {
-                case "DISCONNECT":
+                case "DISCONNECT": // poka zabili boltyaru
                     var number = Convert.ToInt32(mewo[1]);
                     if (server.clients[number].ChildNumber.Count == 0) break;
 

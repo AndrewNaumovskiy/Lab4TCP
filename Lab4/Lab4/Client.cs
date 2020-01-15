@@ -76,8 +76,6 @@ namespace Lab4
                     Console.WriteLine(message);
                     
                     Parse(message);
-
-
                 }
                 catch
                 {
@@ -97,10 +95,7 @@ namespace Lab4
                     Number = Convert.ToInt32(parameters[1]);
                     break;
                 case "PROTOCOL":
-                    string msg = "";
-                    for (int i = 1; i < parameters.Length; i++)
-                        msg += parameters[i];
-                    MakeLog(msg);
+                    MakeLog(command.Replace("PROTOCOL ",""));
                     break;
                 case "GENERATE":
                     string kek = FibonachiGenerator.Generate(Convert.ToInt32(parameters[1])).ToString();
@@ -111,7 +106,9 @@ namespace Lab4
 
         public static void MakeLog(string message)
         {
-            FileHelper.Log(Program.LogFilePath,message);
+            var FileName = Program.LogFilePath.Replace(".txt", $"_{Number}.txt");
+
+            FileHelper.Log(FileName, message);
         }
 
         static void Disconnect()

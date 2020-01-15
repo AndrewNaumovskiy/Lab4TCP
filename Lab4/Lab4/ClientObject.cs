@@ -31,6 +31,10 @@ namespace Lab4
                 else
                     server.ChildNumber.Add(server.clients.FindIndex(x => x == this) + 1);
             }
+            else
+            {
+                server.ChildNumber.Add(server.clients.FindIndex(x => x == this) + 1);
+            }
             ChildNumber = new List<int>();
 
         }
@@ -54,7 +58,7 @@ namespace Lab4
                     }
                     catch
                     {
-                        var message = String.Format($"{Id}: left chat");
+                        var message = String.Format($"{Id}: disconnected");
                         Console.WriteLine(message);
                         server.BroadcastMessage(message, this.Id);
                         break;
@@ -73,11 +77,11 @@ namespace Lab4
             }
         }
 
-        private int nextId = 0;
+        private int nextId = -1;
         public int GetNextId()
         {
             nextId++;
-            if (nextId > ChildNumber.Count)
+            if (nextId >= ChildNumber.Count)
                 nextId = 0;
             return nextId;
         }

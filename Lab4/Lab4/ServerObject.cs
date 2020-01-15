@@ -68,34 +68,48 @@ namespace Lab4
             }
         }
 
-        private int nextId = 0;
+        private int nextId = -1;
         public int GetNextId()
         {
             nextId++;
-            if (nextId > ChildNumber.Count)
+            if (nextId >= ChildNumber.Count)
                 nextId = 0;
             return nextId;
         }
 
+        private List<int> logs;
         public void Generate(int number)
         {
+            logs = new List<int>();
+
             if (number < 2 || ChildNumber.Count == 0)
             {
+                logs.Add(0);
                 Protocol(number);
-                return;
             }
-            if (ChildNumber.Count == 1)
+            else
             {
-                Protocol(number);
-                generate(number - 2, ChildNumber[GetNextId()]);
-                return;
+                if (ChildNumber.Count == 1)
+                {
+                    Protocol(number);
+                    generate(number - 2, ChildNumber[GetNextId()] - 1);
+                }
+                else
+                {
+                    generate(number - 1, ChildNumber[GetNextId()] - 1);
+                    generate(number - 2, ChildNumber[GetNextId()] - 1);
+                }
             }
-            generate(number - 1, ChildNumber[GetNextId()]);
-            generate(number - 2, ChildNumber[GetNextId()]);
+
+            string kek = $"F{number}: ";
+            logs.Distinct().ToList().ForEach(x => kek += x.ToString()+" ");
+            FileHelper.Log("server_logs.txt", kek);
         }
 
         private void generate(int number, int id)
         {
+            logs.Add(id);
+
             if (number < 2 || clients[id].ChildNumber.Count == 0)
             {
                 SendToSpecificClient(GenProtocol(number), id);
@@ -104,11 +118,11 @@ namespace Lab4
             if (clients[id].ChildNumber.Count == 1)
             {
                 generate(number - 1, id);
-                generate(number - 2, clients[id].ChildNumber[clients[id].GetNextId()]);
+                generate(number - 2, clients[id].ChildNumber[clients[id].GetNextId()] - 1);
                 return;
             }
-            generate(number - 1, clients[id].ChildNumber[clients[id].GetNextId()]);
-            generate(number - 2, clients[id].ChildNumber[clients[id].GetNextId()]);
+            generate(number - 1, clients[id].ChildNumber[clients[id].GetNextId()] - 1);
+            generate(number - 2, clients[id].ChildNumber[clients[id].GetNextId()] - 1);
         }
 
         bool beforeGenerate = true;
