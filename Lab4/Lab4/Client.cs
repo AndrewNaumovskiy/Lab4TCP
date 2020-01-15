@@ -12,6 +12,7 @@ namespace Lab4
         public static string userName;
         static TcpClient client;
         static NetworkStream stream;
+        public static int Number;
 
         public static void Init()
         {
@@ -81,6 +82,31 @@ namespace Lab4
                     Disconnect();
                 }
             }
+        }
+
+        public static void Parse(string command)
+        {
+            var parameters = command.Split(' ');
+            switch (parameters[0])
+            {
+                case "NUMBER":
+                    Number = Convert.ToInt32(parameters[1]);
+                    break;
+                case "PROTOCOL":
+                    string msg = "";
+                    for (int i = 1; i < parameters.Length; i++)
+                        msg += parameters[i];
+                    Protocol(msg);
+                    break;
+                case "GENERATE":
+                    SendMessage();
+                    break;
+            }
+        }
+
+        public static void Protocol(string message)
+        {
+            //
         }
 
         static void Disconnect()
