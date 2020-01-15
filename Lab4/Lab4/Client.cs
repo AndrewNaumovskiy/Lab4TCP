@@ -11,6 +11,8 @@ namespace Lab4
         private static Socket sck;
         public static void Init()
         {
+            Console.Title = "Client";
+
             sck = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             sck.Connect(Program.IP, Program.port);
             Console.WriteLine("Connected");
@@ -18,13 +20,13 @@ namespace Lab4
 
             while (true)
             {
-                Task.Run(() =>
-                {
-                    sck.Accept();
-                    sck.Receive(buffer);
+                //Task.Run(() =>
+                //{
+                //    sck.Accept();
+                //    sck.Receive(buffer);
 
-                    Console.WriteLine(Encoding.ASCII.GetString(buffer));
-                });
+                //    Console.WriteLine(Encoding.ASCII.GetString(buffer));
+                //});
                 Task.Run(() =>
                 {
                     string kek = Console.ReadLine();

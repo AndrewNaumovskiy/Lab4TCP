@@ -14,6 +14,8 @@ namespace Lab4
 
         public static void Init()
         {
+            Console.Title = "Server";
+
             listener = new Listener(Program.IP, Program.port);
             listener.SocketAccepted += new Listener.SocketAcceptedHandler(listener_SocketAccepted);
             listener.Start();
@@ -24,7 +26,6 @@ namespace Lab4
         {
             ClientHelper client = new ClientHelper(e);
             client.Received += new ClientHelper.ClientReceivedHandler(client_Received);
-            client.Send += new ClientHelper.ClientSendHandler(client_Sended);
             client.Disconnected += new ClientHelper.ClientDisconnectHandler(client_Disconnected);
 
             connectedClients.Add(client);
@@ -55,24 +56,11 @@ namespace Lab4
                         connectedClients[i].Close();
                         return;
                     }
+
                     Console.WriteLine($"{connectedClients[i].endPoint} message: {kek}");
                     break;
                 }
             }
-        }
-        private static void client_Sended(ClientHelper sender, byte[] data)
-        {
-            Task.Run(() =>
-            {
-                Console.WriteLine("START SENDING");
-                string kek = Console.ReadLine();
-                byte[] buffer = Encoding.ASCII.GetBytes(kek);
-
-                for (int i = 0; i < connectedClients.Count; i++)
-                {
-                    connectedClients[i].sck.Send(buffer);
-                }
-            });
         }
 
         private static void l_SocketAccepted(Socket e)

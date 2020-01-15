@@ -41,12 +41,6 @@ namespace Lab4
                     Received(this, buffer);
                 }
                 sck.BeginReceive(new byte[] { 0 }, 0, 0, 0, callback, null);
-
-                if (Send != null)
-                {
-                    Send(this, buffer);
-                }
-                sck.BeginSend(new byte[] { 0 }, 0, 0, 0, callback, null);
             }
             catch (Exception e)
             {
@@ -66,11 +60,9 @@ namespace Lab4
         }
 
         public delegate void ClientReceivedHandler(ClientHelper sender, byte[] data);
-        public delegate void ClientSendHandler(ClientHelper sender, byte[] data);
         public delegate void ClientDisconnectHandler(ClientHelper sender);
 
         public event ClientReceivedHandler Received;
-        public event ClientSendHandler Send;
         public event ClientDisconnectHandler Disconnected;
 
     }
