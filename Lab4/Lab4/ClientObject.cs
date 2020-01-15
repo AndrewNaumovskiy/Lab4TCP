@@ -26,17 +26,21 @@ namespace Lab4
             if (server.clients.Count > 1)
             {
                 ParentNumber = FileHelper.GetNextRndNumber() % server.clients.Count;
-                server.clients[ParentNumber - 1]?.ChildNumber.Add(server.clients.FindIndex(x => x == this) + 1);
+                if (ParentNumber > 0)
+                    server.clients[ParentNumber - 1].ChildNumber.Add(server.clients.FindIndex(x => x == this) + 1);
+                else
+                    server.ChildNumber.Add(server.clients.FindIndex(x => x == this) + 1);
             }
             ChildNumber = new List<int>();
+
         }
 
         public void Process()
         {
             try
             {
-                server.SendToSpecificClient("NUMBER",server.clients.FindIndex(x => x == this) + 1);
                 Stream = client.GetStream();
+                server.SendToSpecificClient($"NUMBER {server.clients.FindIndex(x => x == this) + 1}", server.clients.FindIndex(x => x == this));
                 
                 // в бесконечном цикле получаем сообщения от клиента
                 while (true)
@@ -45,7 +49,6 @@ namespace Lab4
                     {
                         var message = GetMessage();
                         server.Parse(message, this);
-                        message = String.Format($"{Id}: {message}");
                         Console.WriteLine(message);
                         server.BroadcastMessage(message, this.Id);
                     }
@@ -68,6 +71,15 @@ namespace Lab4
                 server.RemoveConnection(this.Id);
                 Close();
             }
+        }
+
+        private int nextId = 0;
+        public int GetNextId()
+        {
+            nextId++;
+            if (nextId > ChildNumber.Count)
+                nextId = 0;
+            return nextId;
         }
 
         // чтение входящего сообщения и преобразование в строку

@@ -73,7 +73,11 @@ namespace Lab4
 
                     string message = builder.ToString();
 
+                    Console.WriteLine(message);
+                    
                     Parse(message);
+
+
                 }
                 catch
                 {
@@ -96,7 +100,7 @@ namespace Lab4
                     string msg = "";
                     for (int i = 1; i < parameters.Length; i++)
                         msg += parameters[i];
-                    Protocol(msg);
+                    MakeLog(msg);
                     break;
                 case "GENERATE":
                     string kek = FibonachiGenerator.Generate(Convert.ToInt32(parameters[1])).ToString();
@@ -105,7 +109,7 @@ namespace Lab4
             }
         }
 
-        public static void Protocol(string message)
+        public static void MakeLog(string message)
         {
             FileHelper.Log(Program.LogFilePath,message);
         }
