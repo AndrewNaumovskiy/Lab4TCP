@@ -63,7 +63,7 @@ namespace Lab4
                 server.RemoveConnection(this.Id);
                 Close();
             }
-        }
+        } 
 
         // чтение входящего сообщения и преобразование в строку
         private string GetMessage()
