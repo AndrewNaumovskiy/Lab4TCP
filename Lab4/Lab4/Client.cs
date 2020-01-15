@@ -20,23 +20,23 @@ namespace Lab4
 
             while (true)
             {
-                //Task.Run(() =>
-                //{
-                //    sck.Accept();
-                //    sck.Receive(buffer);
-
-                //    Console.WriteLine(Encoding.ASCII.GetString(buffer));
-                //});
                 Task.Run(() =>
                 {
-                    string kek = Console.ReadLine();
+                    sck.Accept();
+                    sck.Receive(buffer);
 
-                    int s = sck.Send(Encoding.ASCII.GetBytes(kek));
-                    if (s > 0)
-                    {
-                        Console.WriteLine("Sended");
-                    }
+                    Console.WriteLine(Encoding.ASCII.GetString(buffer));
                 });
+                //Task.Run(() =>
+                //{
+                //    string kek = Console.ReadLine();
+
+                //    int s = sck.Send(Encoding.ASCII.GetBytes(kek));
+                //    if (s > 0)
+                //    {
+                //        Console.WriteLine("Sended");
+                //    }
+                //});
             }
         }
 

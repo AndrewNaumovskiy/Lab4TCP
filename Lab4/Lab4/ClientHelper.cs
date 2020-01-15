@@ -19,17 +19,18 @@ namespace Lab4
             sck = acceptedSocket;
             ID = Guid.NewGuid().ToString();
             endPoint = (IPEndPoint)sck.RemoteEndPoint;
-            sck.BeginReceive(new byte[] { 0 }, 0, 0, 0, callback, null);
+            sck.BeginSend(new byte[] {0}, 0, 0, 0, callback, null);
+            //sck.BeginReceive(new byte[] { 0 }, 0, 0, 0, callback, null);
         }
 
         public void callback(IAsyncResult ar)
         {
             try
             {
-                sck.EndReceive(ar);
+                sck.EndSend(ar);
 
                 byte[] buffer = new byte[100];
-                int rec = sck.Receive(buffer, buffer.Length, 0);
+                int rec = sck.Send(buffer, buffer.Length, 0);
 
                 if (rec < buffer.Length)
                 {
@@ -40,7 +41,14 @@ namespace Lab4
                 {
                     Received(this, buffer);
                 }
-                sck.BeginReceive(new byte[] { 0 }, 0, 0, 0, callback, null);
+
+                sck.BeginSend(new byte[] {0}, 0, 0, 0, callback, null);
+
+                //if (Received != null)
+                //{
+                //    Received(this, buffer);
+                //}
+                //sck.BeginReceive(new byte[] { 0 }, 0, 0, 0, callback, null);
             }
             catch (Exception e)
             {

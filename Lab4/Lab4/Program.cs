@@ -24,11 +24,11 @@ namespace Lab4
 
             if (cho == 1)
             {
-                Server.Init();
+                SynchronousSocketListener.Init();
             }
             else
             {
-                Client.Init();
+                SynchronousSocketClient.Init();
             }
 
             Console.ReadLine();

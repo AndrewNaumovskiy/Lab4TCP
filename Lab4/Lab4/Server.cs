@@ -48,19 +48,25 @@ namespace Lab4
         {
             for (int i = 0; i < connectedClients.Count; i++)
             {
-                if (connectedClients[i].ID == sender.ID)
-                {
-                    var kek = Encoding.ASCII.GetString(data);
-                    if (kek == "exit")
-                    {
-                        connectedClients[i].Close();
-                        return;
-                    }
-
-                    Console.WriteLine($"{connectedClients[i].endPoint} message: {kek}");
-                    break;
-                }
+                var kek = Console.ReadLine();
+                int s = connectedClients[i].sck.Send(Encoding.ASCII.GetBytes(kek));
             }
+
+            //for (int i = 0; i < connectedClients.Count; i++)
+            //{
+            //    if (connectedClients[i].ID == sender.ID)
+            //    {
+            //        var kek = Encoding.ASCII.GetString(data);
+            //        if (kek == "exit")
+            //        {
+            //            connectedClients[i].Close();
+            //            return;
+            //        }
+
+            //        Console.WriteLine($"{connectedClients[i].endPoint} message: {kek}");
+            //        break;
+            //    }
+            //}
         }
 
         private static void l_SocketAccepted(Socket e)
