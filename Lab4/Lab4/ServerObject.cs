@@ -99,7 +99,7 @@ namespace Lab4
 
             string kek = $"F{number}: ";
             logs.Distinct().ToList().ForEach(x => kek += x.ToString()+" ");
-            FileHelper.Log("server_logs.txt", kek);
+            FileHelper.Log("server_logs.txt", $"{kek}");
         }
 
         private void generate(int number, int id)
@@ -111,14 +111,20 @@ namespace Lab4
                 SendToSpecificClient(GenProtocol(number), id);
                 return;
             }
+            int index = clients[id].ChildNumber[clients[id].GetNextId()] - 1;
             if (clients[id].ChildNumber.Count == 1)
             {
                 generate(number - 1, id);
-                generate(number - 2, clients[id].ChildNumber[clients[id].GetNextId()] - 1);
+
+                SendToSpecificClient(GenProtocol(number - 2, index + 1), id);
+                generate(number - 2, index);
                 return;
             }
-            generate(number - 1, clients[id].ChildNumber[clients[id].GetNextId()] - 1);
-            generate(number - 2, clients[id].ChildNumber[clients[id].GetNextId()] - 1);
+            SendToSpecificClient(GenProtocol(number - 1, index + 1), id);
+            generate(number - 1, index);
+            index = clients[id].ChildNumber[clients[id].GetNextId()] - 1;
+            SendToSpecificClient(GenProtocol(number - 2, index + 1), id);
+            generate(number - 2, index);
         }
 
         public void Parse(string command, ClientObject sender)
@@ -145,7 +151,7 @@ namespace Lab4
                 return $"PROTOCOL IN F{fib}";
             }
 
-            return $"PROTOCOL OUT {to} F{fib}";
+            return $"\nPROTOCOL OUT {to} F{fib}";
         }
 
         public void Protocol(int fib, int to = -1)
@@ -159,7 +165,7 @@ namespace Lab4
             {
                 msg = $"OUT {to} F{fib}";
             }
-            FileHelper.Log(Program.LogFilePath, msg);
+            FileHelper.Log(Program.LogFilePath, $"{msg}");
         }
 
         public  void SendToSpecificClient(string message, int number)

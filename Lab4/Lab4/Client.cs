@@ -14,9 +14,11 @@ namespace Lab4
         public static int Number;
         static TcpClient client;
         static NetworkStream stream;
+
         public static bool kek = false;
+        
         public static bool CanConnect()
-        {
+        { 
             try
             {
                 client = new TcpClient();
@@ -27,19 +29,17 @@ namespace Lab4
             {
                 kek = false;
             }
-            finally
-            {
-                client.Close();
-            }
             return kek;
         }
 
         public static void Init()
         {
-            client = new TcpClient();
+            Console.Title = "CLIENT";
+
+            //client = new TcpClient();
             try
             {
-                client.Connect(Program.IP, Program.port);
+                //client.Connect(Program.IP, Program.port);
                 stream = client.GetStream();
 
                 // thream for receiving data
@@ -120,8 +120,20 @@ namespace Lab4
         public static void MakeLog(string message)
         {
             var FileName = Program.LogFilePath.Replace(".txt", $"_{Number}.txt");
+            
+            if (message.Contains("IN") && message.Contains("OUT"))
+            {
+                var kek = message.Substring(0, 5);
+                var lol = message.Substring(6, 8);
 
-            FileHelper.Log(FileName, message);
+                FileHelper.Log(FileName, kek);
+                FileHelper.Log(FileName, lol);
+            }
+            else
+            {
+                FileHelper.Log(FileName, message);
+            }
+            
         }
 
         static void Disconnect()

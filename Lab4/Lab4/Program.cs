@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -19,7 +20,6 @@ namespace Lab4
         public const int port = 8888;
         public const string LogFilePath = "log.txt";
         public const string RandomFilePath = "random.txt";
-
 
         static void Main()
         {

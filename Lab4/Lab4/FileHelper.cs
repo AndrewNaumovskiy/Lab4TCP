@@ -17,7 +17,7 @@ namespace Lab4
             {
                 using (StreamWriter streamWriter = new StreamWriter(stream))
                 {
-                    streamWriter.WriteLine(line);
+                    streamWriter.WriteLine($"[{ DateTime.Now}] { line}");
                     streamWriter.Flush();
                     streamWriter.Close();
                 }

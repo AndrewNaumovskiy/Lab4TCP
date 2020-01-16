@@ -14,6 +14,8 @@ namespace Lab4
 
         public static void Init()
         {
+            Console.Title = "SERVER";
+
             try
             {
                 server = new ServerObject();
