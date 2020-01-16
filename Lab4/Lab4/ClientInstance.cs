@@ -6,17 +6,17 @@ using System.Text;
 
 namespace Lab4
 {
-    public class ClientObject
+    public class ClientInstance
     {
         protected internal string Id { get; private set; }
         protected internal NetworkStream Stream { get; private set; }
 
         readonly TcpClient client;
-        readonly ServerObject server;
+        readonly ServerInstance server;
         public int ParentNumber = 0;
         public List<int> ChildNumber;
 
-        public ClientObject(TcpClient tcpClient, ServerObject serverObject)
+        public ClientInstance(TcpClient tcpClient, ServerInstance serverObject)
         {
             Id = Guid.NewGuid().ToString();
             client = tcpClient;
@@ -25,7 +25,7 @@ namespace Lab4
 
             if (server.clients.Count > 1)
             {
-                ParentNumber = FileHelper.GetNextRndNumber() % server.clients.Count;
+                ParentNumber = ClassIO.GetNextRndNumber() % server.clients.Count;
                 if (ParentNumber > 0)
                     server.clients[ParentNumber - 1].ChildNumber.Add(server.clients.FindIndex(x => x == this) + 1);
                 else
@@ -57,9 +57,6 @@ namespace Lab4
                     }
                     catch
                     {
-                        var message = String.Format($"{Id}: disconnected");
-                        Console.WriteLine(message);
-                        server.BroadcastMessage(message, this.Id);
                         break;
                     }
                 }

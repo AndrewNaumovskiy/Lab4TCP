@@ -17,7 +17,7 @@ namespace Lab4
 
         public static bool kek = false;
         
-        public static bool CanConnect()
+        public static bool Check()
         { 
             try
             {
@@ -32,17 +32,13 @@ namespace Lab4
             return kek;
         }
 
-        public static void Init()
+        public static void Start()
         {
-            Console.Title = "CLIENT";
-
-            //client = new TcpClient();
+            
             try
             {
-                //client.Connect(Program.IP, Program.port);
                 stream = client.GetStream();
 
-                // thream for receiving data
                 Thread receiveThread = new Thread(new ThreadStart(ReceiveMessage));
                 receiveThread.Start();
                 SendMessage();
@@ -57,11 +53,8 @@ namespace Lab4
             }
         }
 
-        // sending data
         static void SendMessage()
         {
-            Console.WriteLine("Enter message: ");
-
             while (true)
             {
                 var messageFromConsole = Console.ReadLine();
@@ -93,7 +86,7 @@ namespace Lab4
                 }
                 catch
                 {
-                    Console.WriteLine("Connection aborted!");
+                    Console.WriteLine("Connection closed");
                     Console.ReadLine();
                     Disconnect();
                 }
@@ -108,11 +101,11 @@ namespace Lab4
                 case "NUMBER":
                     Number = Convert.ToInt32(parameters[1]);
                     break;
+                case "GENERATE":
+                    string kek = GenFibonachi.Generate(Convert.ToInt32(parameters[1])).ToString();
+                    break;
                 case "PROTOCOL":
                     MakeLog(command.Replace("PROTOCOL ",""));
-                    break;
-                case "GENERATE":
-                    string kek = FibonachiGenerator.Generate(Convert.ToInt32(parameters[1])).ToString();
                     break;
             }
         }
@@ -126,14 +119,13 @@ namespace Lab4
                 var kek = message.Substring(0, 5);
                 var lol = message.Substring(6, 8);
 
-                FileHelper.Log(FileName, kek);
-                FileHelper.Log(FileName, lol);
+                ClassIO.Log(FileName, kek);
+                ClassIO.Log(FileName, lol);
             }
             else
             {
-                FileHelper.Log(FileName, message);
+                ClassIO.Log(FileName, message);
             }
-            
         }
 
         static void Disconnect()

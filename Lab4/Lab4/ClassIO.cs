@@ -6,7 +6,7 @@ using System.IO.Pipes;
 
 namespace Lab4
 {
-    public static class FileHelper
+    public static class ClassIO
     {
         public static void Log(string filePath, string line)
         {
@@ -17,7 +17,7 @@ namespace Lab4
             {
                 using (StreamWriter streamWriter = new StreamWriter(stream))
                 {
-                    streamWriter.WriteLine($"[{ DateTime.Now}] { line}");
+                    streamWriter.WriteLine($"{line}");
                     streamWriter.Flush();
                     streamWriter.Close();
                 }

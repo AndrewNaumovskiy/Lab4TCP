@@ -10,19 +10,19 @@ using System.Threading;
 
 namespace Lab4
 {
-    public class ServerObject
+    public class ServerInstance
     {
         static TcpListener tcpListener;
-        public List<ClientObject> clients = new List<ClientObject>();
+        public List<ClientInstance> clients = new List<ClientInstance>();
         public List<int> ChildNumber;
 
-        protected internal void AddConnection(ClientObject clientObject)
+        protected internal void AddConnection(ClientInstance clientObject)
         {
             clients.Add(clientObject);
         }
         protected internal void RemoveConnection(string id)
         {
-            ClientObject client = clients.FirstOrDefault(c => c.Id == id);
+            ClientInstance client = clients.FirstOrDefault(c => c.Id == id);
             if (client != null)
                 clients.Remove(client);
         }
@@ -34,13 +34,13 @@ namespace Lab4
 
                 tcpListener = new TcpListener(IPAddress.Parse(Program.IP), Program.port);
                 tcpListener.Start();
-                Console.WriteLine("Server started. Waiting for connections...");
+                Console.WriteLine("Server created. listening");
 
                 while (true)
                 {
                     TcpClient tcpClient = tcpListener.AcceptTcpClient();
 
-                    ClientObject clientObject = new ClientObject(tcpClient, this);
+                    ClientInstance clientObject = new ClientInstance(tcpClient, this);
                     Thread clientThread = new Thread(new ThreadStart(clientObject.Process));
                     clientThread.Start();
                 }
@@ -99,7 +99,7 @@ namespace Lab4
 
             string kek = $"F{number}: ";
             logs.Distinct().ToList().ForEach(x => kek += x.ToString()+" ");
-            FileHelper.Log("server_logs.txt", $"{kek}");
+            ClassIO.Log("server_logs.txt", $"{kek}");
         }
 
         private void generate(int number, int id)
@@ -127,7 +127,7 @@ namespace Lab4
             generate(number - 2, index);
         }
 
-        public void Parse(string command, ClientObject sender)
+        public void Parse(string command, ClientInstance sender)
         {
             var parameters = command.Split(' ');
             switch (parameters[0])
@@ -138,7 +138,7 @@ namespace Lab4
                     SendToSpecificClient($"GENERATE {kek}", number - 1);
                     break;
                 case "GENERATE":
-                    string fibonacciGenerated = FibonachiGenerator.Generate(Convert.ToInt32(parameters[1])).ToString();
+                    string fibonacciGenerated = GenFibonachi.Generate(Convert.ToInt32(parameters[1])).ToString();
                     SendToSpecificClient(fibonacciGenerated, clients.FindIndex(x => x == sender) + 1);
                     break;
             }
@@ -165,7 +165,7 @@ namespace Lab4
             {
                 msg = $"OUT {to} F{fib}";
             }
-            FileHelper.Log(Program.LogFilePath, $"{msg}");
+            ClassIO.Log(Program.LogFilePath, $"{msg}");
         }
 
         public  void SendToSpecificClient(string message, int number)

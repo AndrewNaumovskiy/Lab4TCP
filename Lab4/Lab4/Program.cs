@@ -18,25 +18,25 @@ namespace Lab4
     {
         public const string IP = "127.0.0.1";
         public const int port = 8888;
-        public const string LogFilePath = "log.txt";
         public const string RandomFilePath = "random.txt";
-
+        public const string LogFilePath = "log.txt";
+        
         static void Main()
         {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
 
             TimeSpan timer;
             while (true)
             {
-                timer = stopwatch.Elapsed;
-                if (timer.Seconds < 5 && Client.CanConnect())
+                timer = watch.Elapsed;
+                if (timer.Milliseconds < 5000 && Client.Check())
                 {
-                    Client.Init();
+                    Client.Start();
                 }
                 else
                 {
-                    Server.Init();
+                    Server.Start();
                 }
             }
         }

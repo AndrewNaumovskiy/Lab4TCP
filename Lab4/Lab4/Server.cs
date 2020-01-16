@@ -9,16 +9,14 @@ namespace Lab4
 {
     public static class Server
     {
-        static ServerObject server;
+        static ServerInstance server;
         static Thread listenThread;
 
-        public static void Init()
+        public static void Start()
         {
-            Console.Title = "SERVER";
-
             try
             {
-                server = new ServerObject();
+                server = new ServerInstance();
                 listenThread = new Thread(new ThreadStart(server.Listen));
                 listenThread.Start();
                 

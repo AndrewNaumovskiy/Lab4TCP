@@ -5,7 +5,7 @@ using System.Numerics;
 
 namespace Lab4
 {
-    static class FibonachiGenerator
+    static class GenFibonachi
     {
         public static BigInteger Generate(int number)
         {
