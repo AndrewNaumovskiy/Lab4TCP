@@ -9,8 +9,8 @@ namespace Lab4
 {
     public static class Server
     {
-        static ServerObject server; // сервер
-        static Thread listenThread; // потока для прослушивания
+        static ServerObject server;
+        static Thread listenThread;
 
         public static void Init()
         {
@@ -18,7 +18,7 @@ namespace Lab4
             {
                 server = new ServerObject();
                 listenThread = new Thread(new ThreadStart(server.Listen));
-                listenThread.Start(); //старт потока
+                listenThread.Start();
                 
                 while (true)
                 {
@@ -38,7 +38,7 @@ namespace Lab4
             var mewo = kek.Split(' ');
             switch (mewo[0])
             {
-                case "DISCONNECT": // poka zabili boltyaru
+                case "DISCONNECT":
                     var number = Convert.ToInt32(mewo[1]);
                     if (server.clients[number].ChildNumber.Count == 0) break;
 

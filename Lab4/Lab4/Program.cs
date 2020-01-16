@@ -23,18 +23,22 @@ namespace Lab4
 
         static void Main()
         {
-            int cho = Convert.ToInt32(Console.ReadLine());
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
 
-            if (cho == 1)
+            TimeSpan timer;
+            while (true)
             {
-                Server.Init();
+                timer = stopwatch.Elapsed;
+                if (timer.Seconds < 5 && Client.CanConnect())
+                {
+                    Client.Init();
+                }
+                else
+                {
+                    Server.Init();
+                }
             }
-            else
-            {
-                Client.Init();
-            }
-
-            Console.ReadLine();
         }
     }
 }

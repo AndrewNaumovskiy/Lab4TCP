@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Sockets;
 using System.Numerics;
 using System.Text;
@@ -13,18 +14,37 @@ namespace Lab4
         public static int Number;
         static TcpClient client;
         static NetworkStream stream;
+        public static bool kek = false;
+        public static bool CanConnect()
+        {
+            try
+            {
+                client = new TcpClient();
+                client.Connect(Program.IP, Program.port);
+                kek = client.Connected;
+            }
+            catch (Exception e)
+            {
+                kek = false;
+            }
+            finally
+            {
+                client.Close();
+            }
+            return kek;
+        }
 
         public static void Init()
         {
             client = new TcpClient();
             try
             {
-                client.Connect(Program.IP, Program.port); //подключение клиента
-                stream = client.GetStream(); // получаем поток
+                client.Connect(Program.IP, Program.port);
+                stream = client.GetStream();
 
-                // запускаем новый поток для получения данных
+                // thream for receiving data
                 Thread receiveThread = new Thread(new ThreadStart(ReceiveMessage));
-                receiveThread.Start(); //старт потока
+                receiveThread.Start();
                 SendMessage();
             }
             catch (Exception ex)
@@ -37,7 +57,7 @@ namespace Lab4
             }
         }
 
-        // отправка сообщений
+        // sending data
         static void SendMessage()
         {
             Console.WriteLine("Enter message: ");
@@ -50,19 +70,13 @@ namespace Lab4
             }
         }
 
-        private static void ClientToServer(string message)
-        {
-            
-        }
-
-        // получение сообщений
         static void ReceiveMessage()
         {
             while (true)
             {
                 try
                 {
-                    byte[] data = new byte[64]; // буфер для получаемых данных
+                    byte[] data = new byte[64];
                     StringBuilder builder = new StringBuilder();
                     int bytes = 0;
                     do
@@ -79,7 +93,7 @@ namespace Lab4
                 }
                 catch
                 {
-                    Console.WriteLine("Connection aborted!"); //соединение было прервано
+                    Console.WriteLine("Connection aborted!");
                     Console.ReadLine();
                     Disconnect();
                 }
@@ -99,7 +113,6 @@ namespace Lab4
                     break;
                 case "GENERATE":
                     string kek = FibonachiGenerator.Generate(Convert.ToInt32(parameters[1])).ToString();
-                    ClientToServer(kek);
                     break;
             }
         }
@@ -114,11 +127,11 @@ namespace Lab4
         static void Disconnect()
         {
             if (stream != null)
-                stream.Close(); //отключение потока
+                stream.Close();
             if (client != null)
-                client.Close(); //отключение клиента
+                client.Close();
 
-            Environment.Exit(0); //завершение процесса
+            Environment.Exit(0);
         }
     }
 }

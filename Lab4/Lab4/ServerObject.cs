@@ -12,8 +12,8 @@ namespace Lab4
 {
     public class ServerObject
     {
-        static TcpListener tcpListener; // сервер для прослушивания
-        public List<ClientObject> clients = new List<ClientObject>(); // все подключения
+        static TcpListener tcpListener;
+        public List<ClientObject> clients = new List<ClientObject>();
         public List<int> ChildNumber;
 
         protected internal void AddConnection(ClientObject clientObject)
@@ -22,13 +22,10 @@ namespace Lab4
         }
         protected internal void RemoveConnection(string id)
         {
-            // получаем по id закрытое подключение
             ClientObject client = clients.FirstOrDefault(c => c.Id == id);
-            // и удаляем его из списка подключений
             if (client != null)
                 clients.Remove(client);
         }
-        // прослушивание входящих подключений
         protected internal void Listen()
         {
             try
@@ -55,15 +52,14 @@ namespace Lab4
             }
         }
 
-        // трансляция сообщения подключенным клиентам
         protected internal void BroadcastMessage(string message, string id)
         {
             byte[] data = Encoding.Unicode.GetBytes(message);
             for (int i = 0; i < clients.Count; i++)
             {
-                if (clients[i].Id != id) // если id клиента не равно id отправляющего
+                if (clients[i].Id != id)
                 {
-                    clients[i].Stream.Write(data, 0, data.Length); //передача данных
+                    clients[i].Stream.Write(data, 0, data.Length);
                 }
             }
         }
@@ -125,10 +121,8 @@ namespace Lab4
             generate(number - 2, clients[id].ChildNumber[clients[id].GetNextId()] - 1);
         }
 
-        bool beforeGenerate = true;
         public void Parse(string command, ClientObject sender)
         {
-            
             var parameters = command.Split(' ');
             switch (parameters[0])
             {
@@ -174,16 +168,15 @@ namespace Lab4
             clients[number].Stream.Write(data,0,data.Length);
         }
 
-        // отключение всех клиентов
         protected internal void Disconnect()
         {
-            tcpListener.Stop(); //остановка сервера
+            tcpListener.Stop();
 
             for (int i = 0; i < clients.Count; i++)
             {
-                clients[i].Close(); //отключение клиента
+                clients[i].Close();
             }
-            Environment.Exit(0); //завершение процесса
+            Environment.Exit(0);
         }
     }
 }

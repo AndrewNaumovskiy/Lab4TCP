@@ -12,7 +12,7 @@ namespace Lab4
         protected internal NetworkStream Stream { get; private set; }
 
         readonly TcpClient client;
-        readonly ServerObject server; // объект сервера
+        readonly ServerObject server;
         public int ParentNumber = 0;
         public List<int> ChildNumber;
 
@@ -46,7 +46,6 @@ namespace Lab4
                 Stream = client.GetStream();
                 server.SendToSpecificClient($"NUMBER {server.clients.FindIndex(x => x == this) + 1}", server.clients.FindIndex(x => x == this));
                 
-                // в бесконечном цикле получаем сообщения от клиента
                 while (true)
                 {
                     try
@@ -71,7 +70,6 @@ namespace Lab4
             }
             finally
             {
-                // в случае выхода из цикла закрываем ресурсы
                 server.RemoveConnection(this.Id);
                 Close();
             }
@@ -86,10 +84,9 @@ namespace Lab4
             return nextId;
         }
 
-        // чтение входящего сообщения и преобразование в строку
         private string GetMessage()
         {
-            byte[] data = new byte[64]; // буфер для получаемых данных
+            byte[] data = new byte[64];
             StringBuilder builder = new StringBuilder();
             int bytes = 0;
             do
@@ -101,8 +98,6 @@ namespace Lab4
 
             return builder.ToString();
         }
-
-        // закрытие подключения
         protected internal void Close()
         {
             if (Stream != null)
